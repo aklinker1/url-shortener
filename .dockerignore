@@ -1,0 +1,6 @@
+Makefile
+node_modules/
+bin/
+.gitignore
+docker-compose.yml
+Dockerfile

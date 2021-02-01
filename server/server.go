@@ -14,6 +14,7 @@ func Start() {
 	r := createRouter()
 
 	fmt.Println("Connecting to postgres...")
+	connectDB()
 
 	fmt.Printf("Starting server @ :%s\n", PORT)
 	http.ListenAndServe(fmt.Sprintf(":%s", PORT), r)
