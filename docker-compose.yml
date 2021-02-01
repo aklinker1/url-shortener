@@ -1,0 +1,17 @@
+services:
+  server:
+    image: aklinker1/url-shortener:dev
+    ports: 
+      - 3000:3000
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://postgres:password@db/apk-rip-local
+    volumes:
+      - ./ui/dist:/app/ui
+    links:
+      - db
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres

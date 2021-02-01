@@ -1,0 +1,17 @@
+FROM node:14-alpine as ui-builder
+WORKDIR /build
+COPY ui .
+
+FROM golang:1.15-alpine as go-builder
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o bin/server cmd/server/main.go
+
+FROM alpine
+RUN mkdir /app
+COPY --from=ui-builder /build/dist /app/ui
+COPY --from=go-builder /build/bin/server /app
+EXPOSE 3000
+CMD [ "/app/server" ]
