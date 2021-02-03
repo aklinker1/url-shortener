@@ -14,7 +14,7 @@ type urlEntryRepo struct {
 }
 
 var URLEntryRepo = &urlEntryRepo{}
-var ID_CHARACTER_SET = "abcdefghijkmnpqrstuvwxyz" + "ABCDEFGHJKLMNPQRSTUVWXYZ" + "0123456789"
+var ID_CHARACTER_SET = "abcdefghijkmnpqrstuvwxyz" + "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789"
 
 func (repo *urlEntryRepo) Init(db *gorm.DB) {
 	URLEntryRepo.db = db
