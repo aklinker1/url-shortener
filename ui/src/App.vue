@@ -1,27 +1,39 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <div class="relative z-10 max-w-screen-lg mx-auto">
+    <div class="h-80 mb-8">
+      <h1
+        class="pt-12 h-32 font-mono text-7xl align-baseline text-white m-0 text-center"
+      >
+        apk.rip
+      </h1>
+      <h2
+        class="h-8 mb-12 font-mono text-2xl text-white font-light text-opacity-70 m-0 text-center"
+      >
+        Url Shortener
+      </h2>
+      <AddUrl class="max-w-screen-md mx-auto" @created="reload" />
+    </div>
+    <UrlEntriesTable ref="table" class="mb-16" />
+  </div>
+  <div class="absolute top-0 h-80 w-full bg-red-500 z-0" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import { defineComponent, ref } from "vue";
+// @ts-ignore: Using setup script, no default export
+import AddUrl from "./components/AddUrl.vue";
+import UrlEntriesTable from "./components/UrlEntriesTable.vue";
 
 export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-})
-</script>
+  name: "App",
+  components: { AddUrl, UrlEntriesTable },
+  setup() {
+    const table = ref<typeof UrlEntriesTable | null>(null)
+    const reload = () => table.value?.getUrlEntries?.();
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+    return  {
+      table, reload,
+    }
+  }
+});
+</script>
