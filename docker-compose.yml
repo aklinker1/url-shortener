@@ -16,3 +16,20 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: apk-rip-local
+  db-ui:
+    image: sqlpad/sqlpad:latest
+    ports: 
+      - 3002:3000
+    environment: 
+      SQLPAD_AUTH_DISABLED: "true"
+      SQLPAD_AUTH_DISABLED_DEFAULT_ROLE: admin
+      SQLPAD_APP_LOG_LEVEL: warn
+      SQLPAD_WEB_LOG_LEVEL: warn
+      SQLPAD_CONNECTIONS__apk-rip__name: apk-rip
+      SQLPAD_CONNECTIONS__apk-rip__driver: postgres
+      SQLPAD_CONNECTIONS__apk-rip__host: db
+      SQLPAD_CONNECTIONS__apk-rip__port: 5432
+      SQLPAD_CONNECTIONS__apk-rip__database: apk-rip-local
+      SQLPAD_CONNECTIONS__apk-rip__username: postgres
+      SQLPAD_CONNECTIONS__apk-rip__password: password
+      SQLPAD_CONNECTIONS__apk-rip__postgresSsl: 'false'
