@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/aklinker1/url-shortener/server/controllers"
+	"github.com/aklinker1/url-shortener/server/models"
 	"github.com/aklinker1/url-shortener/server/repos"
 	"github.com/aklinker1/url-shortener/server/utils"
 	"github.com/go-chi/chi"
@@ -20,11 +21,13 @@ import (
 func createRouter() *chi.Mux {
 	r := chi.NewRouter()
 	if !IS_PROD {
-		r.Use(middleware.Logger)
+		r.Use(cors)
 	}
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
+	if !IS_PROD {
+		r.Use(middleware.Logger)
+	}
 	r.Use(middleware.Recoverer)
 
 	r.Get("/api/health", controllers.HealthEndpoint())
@@ -110,28 +113,55 @@ func shortURLCtx(next http.Handler) http.Handler {
 
 func paginate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		var page = 0
+		pagination := &models.Pagination{
+			Page: 0,
+			Size: 20,
+		}
 		pageStr := req.URL.Query().Get(utils.PAGE_QUERY_PARAM)
 		if pageStr != "" {
-			var err error
-			page, err = strconv.Atoi(pageStr)
+			pageInt, err := strconv.Atoi(pageStr)
 			if err != nil {
 				http.Error(res, "'page' query param was not a number", http.StatusBadRequest)
+				return
 			}
+			pagination.Page = pageInt
 		}
-		pageCtx := context.WithValue(req.Context(), utils.PAGE_QUERY_PARAM, page)
 
-		var size = 20
 		sizeStr := req.URL.Query().Get(utils.SIZE_QUERY_PARAM)
 		if sizeStr != "" {
-			var err error
-			size, err = strconv.Atoi(sizeStr)
+			sizeInt, err := strconv.Atoi(sizeStr)
 			if err != nil {
 				http.Error(res, "'size' query param was not a number", http.StatusBadRequest)
+				return
 			}
+			pagination.Size = sizeInt
 		}
-		pageAndSizeCtx := context.WithValue(pageCtx, utils.SIZE_QUERY_PARAM, size)
+		paginationCtx := context.WithValue(req.Context(), utils.PAGINATION, pagination)
 
-		next.ServeHTTP(res, req.WithContext(pageAndSizeCtx))
+		next.ServeHTTP(res, req.WithContext(paginationCtx))
+	})
+}
+
+func cors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001")
+		res.Header().Set("Access-Control-Allow-Headers", strings.Join([]string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+		}, ","))
+		res.Header().Set("Access-Control-Allow-Methods", strings.Join([]string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodOptions,
+		}, ","))
+
+		if req.Method == http.MethodOptions {
+			res.WriteHeader(http.StatusOK)
+		} else {
+			next.ServeHTTP(res, req)
+		}
 	})
 }
