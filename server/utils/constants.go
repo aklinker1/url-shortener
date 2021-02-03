@@ -6,5 +6,6 @@ const (
 	URL_ENTRY            = "urlEntry"
 	PAGE_QUERY_PARAM     = "page"
 	SIZE_QUERY_PARAM     = "size"
+	PAGINATION           = "pagination"
 	RESPONSE_TYPE        = "responseType"
 )
