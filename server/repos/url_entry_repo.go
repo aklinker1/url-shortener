@@ -2,6 +2,7 @@ package repos
 
 import (
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -40,8 +41,9 @@ func (repo *urlEntryRepo) Create(url string) (*models.URLEntry, error) {
 		return nil, err
 	}
 	entry := &models.URLEntry{
-		ID:  id,
-		URL: url,
+		ID:        id,
+		URL:       url,
+		CreatedAt: time.Now(),
 	}
 
 	return entry, repo.db.Create(entry).Error
@@ -73,8 +75,12 @@ func (repo *urlEntryRepo) UpdateVisits(entry *models.URLEntry) (*models.URLEntry
 // 	panic("NOT IMPLEMENTED")
 // }
 
-func (repo *urlEntryRepo) List(page, size int) ([]*models.URLEntry, error) {
+func (repo *urlEntryRepo) List(pagination *models.Pagination) ([]*models.URLEntry, error) {
 	models := []*models.URLEntry{}
-	err := repo.db.Find(&models).Limit(size).Offset(page * size).Error
+	err := repo.db.
+		Limit(pagination.Limit()).
+		Offset(pagination.Offset()).
+		Order("created_at DESC").
+		Find(&models).Error
 	return models, err
 }
