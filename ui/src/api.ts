@@ -2,16 +2,17 @@ import Axios from "axios";
 
 const baseUrl =
   process.env.NODE_ENV !== "development"
-    ? "https://apk.rip"
+    ? ""
     : "http://localhost:3000";
 
 export interface UrlEntryDto {
-  ID: string;
-  URL: string;
-  Visits: number;
+  id: number;
+  hashedId: string;
+  url: string;
+  visits: number;
 }
 export interface UrlEntry {
-  id: string;
+  id: number;
   shortened: string;
   url: string;
   visits: number;
@@ -47,10 +48,10 @@ export default {
 
   convertUrlEntryDto(dto: UrlEntryDto): UrlEntry {
     return {
-      id: dto.ID,
-      shortened: `${baseUrl}/${dto.ID}`,
-      url: dto.URL,
-      visits: dto.Visits,
+      id: dto.id,
+      shortened: `${baseUrl}/${dto.hashedId}`,
+      url: dto.url,
+      visits: dto.visits,
     };
   },
 };

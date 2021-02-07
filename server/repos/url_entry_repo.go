@@ -1,13 +1,9 @@
 package repos
 
 import (
-	"errors"
-	"time"
-
 	"gorm.io/gorm"
 
 	"github.com/aklinker1/url-shortener/server/models"
-	"github.com/aklinker1/url-shortener/server/utils"
 )
 
 type urlEntryRepo struct {
@@ -15,37 +11,15 @@ type urlEntryRepo struct {
 }
 
 var URLEntryRepo = &urlEntryRepo{}
-var ID_CHARACTER_SET = "abcdefghijkmnpqrstuvwxyz" + "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789"
 
 func (repo *urlEntryRepo) Init(db *gorm.DB) {
 	URLEntryRepo.db = db
 }
 
-func (repo *urlEntryRepo) nextID() (string, error) {
-	for idLength := 1; idLength < 8; idLength++ {
-		for attempts := 0; attempts < 4; attempts++ {
-			newID := utils.RandomStringWithCharset(idLength, ID_CHARACTER_SET)
-			_, err := repo.Read(newID)
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return newID, nil
-			}
-		}
-	}
-
-	return "", errors.New("Could not generate a new id")
-}
-
 func (repo *urlEntryRepo) Create(url string) (*models.URLEntry, error) {
-	id, err := repo.nextID()
-	if err != nil {
-		return nil, err
-	}
 	entry := &models.URLEntry{
-		ID:        id,
-		URL:       url,
-		CreatedAt: time.Now(),
+		URL: url,
 	}
-
 	return entry, repo.db.Create(entry).Error
 }
 

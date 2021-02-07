@@ -38,7 +38,7 @@ func ListURLEntries() http.HandlerFunc {
 			http.Error(res, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		utils.SendData(req.Context(), res, entries)
+		utils.SendData(req.Context(), res, models.ToDTOs(entries))
 	}
 }
 
@@ -51,7 +51,7 @@ func SearchURLEnties() http.HandlerFunc {
 func GetURLEntry() http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		entry := req.Context().Value(utils.URL_ENTRY).(*models.URLEntry)
-		utils.SendData(req.Context(), res, entry)
+		utils.SendData(req.Context(), res, entry.ToDTO())
 	}
 }
 
@@ -68,7 +68,7 @@ func CreateURLEntry() http.HandlerFunc {
 			return
 		}
 
-		utils.SendData(req.Context(), res, entry)
+		utils.SendData(req.Context(), res, entry.ToDTO())
 	}
 }
 
@@ -86,7 +86,7 @@ func UpdateURLEntry() http.HandlerFunc {
 			return
 		}
 
-		utils.SendData(req.Context(), res, updatedEntry)
+		utils.SendData(req.Context(), res, updatedEntry.ToDTO())
 	}
 }
 
@@ -99,6 +99,6 @@ func DeleteURLEntry() http.HandlerFunc {
 			http.Error(res, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		utils.SendData(ctx, res, entry)
+		utils.SendData(ctx, res, entry.ToDTO())
 	}
 }

@@ -144,7 +144,8 @@ func paginate(next http.Handler) http.Handler {
 
 func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		res.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001")
+		fmt.Println(1, req.URL, 2, req.Host, 3, req.URL.Host, 4, req.URL.Hostname())
+		res.Header().Set("Access-Control-Allow-Origin", "*")
 		res.Header().Set("Access-Control-Allow-Headers", strings.Join([]string{
 			"Accept",
 			"Authorization",
