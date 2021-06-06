@@ -3,7 +3,7 @@ WORKDIR /build
 COPY ui/package.json ui/yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY ui .
-RUN yarn build --mode $MODE
+RUN yarn build
 
 FROM golang:1.16-alpine as go-builder
 WORKDIR /build

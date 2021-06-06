@@ -20,7 +20,7 @@ func (repo *urlEntryRepo) Create(url string) (*models.URLEntry, error) {
 	entry := &models.URLEntry{
 		URL: url,
 	}
-	err = repo.db.Create(entry).Error
+	err := repo.db.Create(entry).Error
 	if err != nil {
 		return nil, err
 	}
