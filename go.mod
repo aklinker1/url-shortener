@@ -1,6 +1,6 @@
 module github.com/aklinker1/url-shortener
 
-go 1.15
+go 1.16
 
 require (
 	github.com/go-chi/chi v1.5.1

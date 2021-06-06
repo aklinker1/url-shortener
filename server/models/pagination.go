@@ -1,8 +1,8 @@
 package models
 
 type Pagination struct {
-	Page int
-	Size int
+	Page int `json:"page"`
+	Size int `json:"size"`
 }
 
 func (it *Pagination) Limit() int {

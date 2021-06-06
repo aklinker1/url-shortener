@@ -1,6 +1,9 @@
 Makefile
-node_modules/
+ui/node_modules
 bin/
+ui/dist
+.git
 .gitignore
 docker-compose.yml
 Dockerfile
+README.md

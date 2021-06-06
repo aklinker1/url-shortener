@@ -1,18 +1,15 @@
 import Axios from "axios";
 
-const baseUrl =
-  process.env.NODE_ENV !== "development"
-    ? ""
-    : "http://localhost:3000";
+const host = `${window.location.protocol}//${window.location.host}`
+const baseUrl = "/@/api";
 
 export interface UrlEntryDto {
-  id: number;
-  hashedId: string;
+  id: string;
   url: string;
   visits: number;
 }
 export interface UrlEntry {
-  id: number;
+  id: string;
   shortened: string;
   url: string;
   visits: number;
@@ -24,32 +21,32 @@ const axios = Axios.create({
 
 export default {
   async listUrlEntries(page: number, size: number): Promise<UrlEntry[]> {
-    const { data: dtos } = await axios.get<UrlEntryDto[]>("/api/urlEntries", {
+    const { data: dtos } = await axios.get<UrlEntryDto[]>("/urlEntries", {
       params: { page, size },
     });
     return dtos.map(this.convertUrlEntryDto);
   },
 
   async createUrlEntry(url: string): Promise<UrlEntry> {
-    const { data: dto } = await axios.post("/api/urlEntries", { url });
+    const { data: dto } = await axios.post("/urlEntries", { url });
     return this.convertUrlEntryDto(dto);
   },
 
   async updateUrlEntry(id: string, newUrl: string) {
-    const { data: dto } = await axios.put(`/api/urlEntries/${id}`, {
+    const { data: dto } = await axios.put(`/urlEntries/${id}`, {
       url: newUrl,
     });
     return this.convertUrlEntryDto(dto);
   },
 
   async deleteUrlEntry(id: string) {
-    await axios.delete(`/api/urlEntries/${id}`);
+    await axios.delete(`/urlEntries/${id}`);
   },
 
   convertUrlEntryDto(dto: UrlEntryDto): UrlEntry {
     return {
       id: dto.id,
-      shortened: `${baseUrl}/${dto.hashedId}`,
+      shortened: `${host}/${dto.id}`,
       url: dto.url,
       visits: dto.visits,
     };

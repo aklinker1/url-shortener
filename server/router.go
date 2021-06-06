@@ -2,11 +2,9 @@ package server
 
 import (
 	"context"
+	"io/fs"
 	"fmt"
 	"net/http"
-	"os"
-	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -18,7 +16,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
-func createRouter() *chi.Mux {
+func createRouter(ui *fs.FS, metaJSON string) *chi.Mux {
 	r := chi.NewRouter()
 	if !IS_PROD {
 		r.Use(cors)
@@ -30,9 +28,9 @@ func createRouter() *chi.Mux {
 	}
 	r.Use(middleware.Recoverer)
 
-	r.Get("/api/health", controllers.HealthEndpoint())
+	r.Get("/@/api/health", controllers.HealthEndpoint(metaJSON))
 
-	r.Route("/api/urlEntries", func(r chi.Router) {
+	r.Route("/@/api/urlEntries", func(r chi.Router) {
 		r.With(paginate).Get("/", controllers.ListURLEntries())
 		// r.With(paginate).Get("/search", controllers.SearchURLEnties())
 		r.Post("/", controllers.CreateURLEntry())
@@ -45,7 +43,7 @@ func createRouter() *chi.Mux {
 		})
 	})
 
-	fileServer(r, "/ui", "/app/ui")
+	fileServer(r, "/@/ui", ui)
 
 	r.Route("/{shortUrl:[a-zA-Z0-9]+}", func(r chi.Router) {
 		r.With(shortURLCtx).Handle("/", controllers.Redirect())
@@ -54,18 +52,12 @@ func createRouter() *chi.Mux {
 	return r
 }
 
-func fileServer(r chi.Router, public string, static string) {
-
+func fileServer(r chi.Router, public string, assets *fs.FS) {
 	if strings.ContainsAny(public, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}
 
-	root, _ := filepath.Abs(static)
-	if _, err := os.Stat(root); os.IsNotExist(err) {
-		panic("Static Documents Directory Not Found")
-	}
-
-	fs := http.StripPrefix(public, http.FileServer(http.Dir(root)))
+	fs := http.StripPrefix(public, http.FileServer(http.FS(*assets)))
 
 	if public != "/" && public[len(public)-1] != '/' {
 		r.Get(public, http.RedirectHandler(public+"/", 301).ServeHTTP)
@@ -73,11 +65,6 @@ func fileServer(r chi.Router, public string, static string) {
 	}
 
 	r.Get(public+"*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		file := strings.Replace(r.RequestURI, public, "/", 1)
-		if _, err := os.Stat(root + file); os.IsNotExist(err) {
-			http.ServeFile(w, r, path.Join(root, "index.html"))
-			return
-		}
 		fs.ServeHTTP(w, r)
 	}))
 }

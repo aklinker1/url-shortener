@@ -20,7 +20,12 @@ func (repo *urlEntryRepo) Create(url string) (*models.URLEntry, error) {
 	entry := &models.URLEntry{
 		URL: url,
 	}
-	return entry, repo.db.Create(entry).Error
+	err = repo.db.Create(entry).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return entry, nil
 }
 
 func (repo *urlEntryRepo) Delete(entry *models.URLEntry) error {
@@ -30,19 +35,28 @@ func (repo *urlEntryRepo) Delete(entry *models.URLEntry) error {
 func (repo *urlEntryRepo) Read(id string) (*models.URLEntry, error) {
 	model := &models.URLEntry{}
 	err := repo.db.First(model, "id = ?", id).Error
-	return model, err
+	if err != nil {
+		return nil, err
+	}
+	return model, nil
 }
 
 func (repo *urlEntryRepo) Update(entry *models.URLEntry, url string) (*models.URLEntry, error) {
 	entry.URL = url
 	err := repo.db.Save(entry).Error
-	return entry, err
+	if err != nil {
+		return nil, err
+	}
+	return entry, nil
 }
 
 func (repo *urlEntryRepo) UpdateVisits(entry *models.URLEntry) (*models.URLEntry, error) {
 	entry.Visits++
 	err := repo.db.Save(entry).Error
-	return entry, err
+	if err != nil {
+		return nil, err
+	}
+	return entry, nil
 }
 
 // func (repo *urlEntryRepo) Search(url string) (*models.URLEntry, error) {

@@ -6,7 +6,18 @@
   >
     <td>
       <p
-        class="w-10 h-10 bg-yellow-500 rounded-full text-yellow-100 text-xl font-mono text-center box-border pt-1.5 ml-3"
+        class="
+          w-10
+          h-10
+          bg-yellow-500
+          rounded-full
+          text-yellow-100 text-xl
+          font-mono
+          text-center
+          box-border
+          pt-1.5
+          ml-3
+        "
       >
         {{ entry.visits }}
       </p>
@@ -22,7 +33,15 @@
     <td>
       <input
         ref="input"
-        class="bg-transparent h-10 px-4 border-none w-full rounded-md ring-yellow-500"
+        class="
+          bg-transparent
+          h-10
+          px-4
+          border-none
+          w-full
+          rounded-md
+          ring-yellow-500
+        "
         :class="{ 'ring-2': isEditing, 'ring-0': !isEditing }"
         :readonly="!isEditing"
         @keyup.enter="updateUrl"
@@ -33,7 +52,15 @@
       <template v-if="areActionsVisible">
         <div
           v-if="isEditing"
-          class="w-10 h-10 box-border p-2 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
+          class="
+            w-10
+            h-10
+            box-border
+            p-2
+            rounded-full
+            hover:bg-black hover:bg-opacity-10
+            transition-colors
+          "
           title="Edit URL"
           @click="updateUrl"
         >
@@ -41,14 +68,30 @@
         </div>
         <div
           v-else
-          class="w-10 h-10 box-border p-2 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
+          class="
+            w-10
+            h-10
+            box-border
+            p-2
+            rounded-full
+            hover:bg-black hover:bg-opacity-10
+            transition-colors
+          "
           title="Edit URL"
           @click="toggleEditing(true)"
         >
           <EditIcon color="#808080" />
         </div>
         <div
-          class="w-10 h-10 box-border p-2 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
+          class="
+            w-10
+            h-10
+            box-border
+            p-2
+            rounded-full
+            hover:bg-black hover:bg-opacity-10
+            transition-colors
+          "
           title="Share Shortened URL"
           @click="copyShortened"
         >
@@ -56,7 +99,15 @@
           <ShareIcon v-else color="#808080" />
         </div>
         <div
-          class="w-10 h-10 box-border p-2 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
+          class="
+            w-10
+            h-10
+            box-border
+            p-2
+            rounded-full
+            hover:bg-black hover:bg-opacity-10
+            transition-colors
+          "
           title="Delete"
           @click="deleteUrl"
         >
@@ -126,10 +177,25 @@ export default defineComponent({
 
     const isCopied = ref(false);
     let copyTimeout: any | undefined;
-    const copyShortened = () => {
-      input.value?.select();
+    function copyStringToClipboard(str: string) {
+      // Create new element
+      var el = document.createElement("textarea");
+      // Set value (string to be copied)
+      el.value = str;
+      // Set non-editable to avoid focus and move outside of view
+      el.setAttribute("readonly", "");
+      // @ts-expect-error
+      el.style = { position: "absolute", left: "-9999px" };
+      document.body.appendChild(el);
+      // Select text inside element
+      el.select();
+      // Copy text to clipboard
       document.execCommand("copy");
-      input.value?.blur();
+      // Remove temporary element
+      document.body.removeChild(el);
+    }
+    const copyShortened = () => {
+      copyStringToClipboard(props.entry.shortened);
       isCopied.value = true;
       if (copyTimeout != null) {
         clearTimeout(copyTimeout);

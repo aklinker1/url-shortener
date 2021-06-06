@@ -21,7 +21,7 @@ func Redirect() http.HandlerFunc {
 		entry := req.Context().Value(utils.URL_ENTRY).(*models.URLEntry)
 		fmt.Println("id =", id, "entry =", entry) // TODO: remove
 		if entry == nil {
-			http.Redirect(res, req, fmt.Sprintf("/ui?badId=%s", id), http.StatusSeeOther)
+			http.Redirect(res, req, fmt.Sprintf("/@/ui?badId=%s", id), http.StatusSeeOther)
 		} else {
 			repos.URLEntryRepo.UpdateVisits(entry)
 			http.Redirect(res, req, entry.URL, http.StatusFound)

@@ -1,17 +1,20 @@
 FROM node:14-alpine as ui-builder
+ARG MODE
 WORKDIR /build
+COPY ui/package.json ui/yarn.lock ./
+RUN yarn install --frozen-lockfile
 COPY ui .
+RUN yarn build --mode $MODE
 
-FROM golang:1.15-alpine as go-builder
+FROM golang:1.16-alpine as go-builder
 WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o bin/server cmd/server/main.go
+COPY --from=ui-builder /build/dist ui
+RUN go build -o bin/server main.go
 
 FROM alpine
-RUN mkdir /app
-COPY --from=ui-builder /build/dist /app/ui
-COPY --from=go-builder /build/bin/server /app
-EXPOSE 3000
-CMD [ "/app/server" ]
+WORKDIR /app
+COPY --from=go-builder /build/bin/server .
+CMD ./server

@@ -2,12 +2,31 @@
   <div class="relative z-10 max-w-screen-lg mx-auto">
     <div class="h-80 mb-8">
       <h1
-        class="pt-12 h-32 font-mono text-7xl align-baseline text-white m-0 text-center"
+        class="
+          pt-12
+          h-32
+          font-mono
+          text-7xl
+          align-baseline
+          text-white
+          m-0
+          text-center
+        "
       >
         apk.rip
       </h1>
       <h2
-        class="h-8 mb-12 font-mono text-2xl text-white font-light text-opacity-70 m-0 text-center"
+        class="
+          h-8
+          mb-12
+          font-mono
+          text-2xl text-white
+          font-light
+          text-opacity-70
+          m-0
+          text-center
+          uppercase
+        "
       >
         Url Shortener
       </h2>
@@ -28,12 +47,13 @@ export default defineComponent({
   name: "App",
   components: { AddUrl, UrlEntriesTable },
   setup() {
-    const table = ref<typeof UrlEntriesTable | null>(null)
+    const table = ref<typeof UrlEntriesTable | null>(null);
     const reload = () => table.value?.getUrlEntries?.();
 
-    return  {
-      table, reload,
-    }
-  }
+    return {
+      table,
+      reload,
+    };
+  },
 });
 </script>
