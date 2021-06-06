@@ -28,6 +28,8 @@ func createRouter(ui *fs.FS, metaJSON string) *chi.Mux {
 	}
 	r.Use(middleware.Recoverer)
 
+	r.Get("/", controllers.RootEndpoint())
+
 	r.Get("/@/api/health", controllers.HealthEndpoint(metaJSON))
 
 	r.Route("/@/api/urlEntries", func(r chi.Router) {
