@@ -1,5 +1,4 @@
 FROM node:14-alpine as ui-builder
-ARG MODE
 WORKDIR /build
 COPY ui/package.json ui/yarn.lock ./
 RUN yarn install --frozen-lockfile
