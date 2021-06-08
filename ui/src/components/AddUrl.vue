@@ -3,7 +3,7 @@
     <div class="flex flex-row-reverse h-12">
       <div
         class="overflow-hidden transition-all"
-        :class="{ 'max-w-0': !isValidUrl, 'max-w-xl': !!isValidUrl }"
+        :class="{ 'max-w-0': !isShowingNew, 'max-w-xl': !!isShowingNew }"
       >
         <button
           type="submit"
@@ -15,7 +15,10 @@
       </div>
       <input
         class="px-4 flex-1 bg-white rounded-l-md outline-none ring-0 ring-red-100 ring-opacity-50 focus:ring"
-        :class="{ 'rounded-r-md text-red-500': !isValidUrl }"
+        :class="{
+          'rounded-r-md': !isShowingNew,
+          'text-red-500': isLoggedIn && !isValidUrl,
+        }"
         placeholder="Enter a url..."
         v-model="url"
         :disabled="isLoading"
@@ -34,6 +37,7 @@
 import { computed, defineEmit, ref } from "vue";
 import ErrorIcon from "../assets/ErrorIcon.vue";
 import api from "../api";
+import { useAuth } from '../composition/auth';
 
 const emit = defineEmit(["created"]);
 
@@ -65,4 +69,7 @@ async function createNewUrlEntry() {
     isLoading.value = false;
   }
 }
+
+const { isLoggedIn } = useAuth();
+const isShowingNew = computed(() => isLoggedIn.value && isValidUrl.value)
 </script>
