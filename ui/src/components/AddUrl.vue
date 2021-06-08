@@ -21,7 +21,7 @@
         }"
         placeholder="Enter a url..."
         v-model="url"
-        :disabled="isLoading || !isLoggedIn"
+        :disabled="isLoading"
       />
     </div>
     <div class="flex flex-row mt-3 text-white">
@@ -54,6 +54,8 @@ const isError = computed(() => !!errorMessage.value);
 
 const isLoading = ref(false);
 async function createNewUrlEntry() {
+  if (isShowingNew.value) return;
+
   const value = url.value.trim();
   if (value == "") return;
 
