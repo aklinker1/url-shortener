@@ -32,7 +32,7 @@ func (repo *urlEntryRepo) Delete(entry *models.URLEntry) error {
 	return repo.db.Delete(entry).Error
 }
 
-func (repo *urlEntryRepo) Read(id string) (*models.URLEntry, error) {
+func (repo *urlEntryRepo) Read(id int64) (*models.URLEntry, error) {
 	model := &models.URLEntry{}
 	err := repo.db.First(model, "id = ?", id).Error
 	if err != nil {
