@@ -6,10 +6,10 @@ import (
 )
 
 type URLEntry struct {
-	ID        uint64    `gorm:"primaryKey" json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	URL       string    `gorm:"unique" json:"url"`
-	Visits    uint64    `json:"visits"`
+	ID        uint64 `gorm:"primaryKey" `
+	CreatedAt time.Time
+	URL       string `gorm:"unique" `
+	Visits    uint64
 }
 
 func (model *URLEntry) ToDTO() *URLEntryDTO {
