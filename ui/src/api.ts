@@ -20,9 +20,9 @@ const axios = Axios.create({
 });
 
 export default {
-  async listUrlEntries(page: number, size: number): Promise<UrlEntry[]> {
+  async listUrlEntries(page: number, size: number, search?: string): Promise<UrlEntry[]> {
     const { data: dtos } = await axios.get<UrlEntryDto[]>("/urlEntries", {
-      params: { page, size },
+      params: { page, size, search },
     });
     return dtos.map(this.convertUrlEntryDto);
   },

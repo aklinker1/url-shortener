@@ -34,14 +34,18 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import api, { UrlEntry } from "../api";
 import PaginatedTable from "./PaginatedTable.vue";
 import EntryRow from "./EntryRow.vue";
+import debounce from 'lodash.debounce';
 
 export default defineComponent({
   components: { PaginatedTable, EntryRow },
-  setup() {
+  props: {
+    search: { type: String, default: '' },
+  },
+  setup(props) {
     const items = ref<UrlEntry[]>([]);
     const isEmpty = computed(() => items.value.length === 0);
 
@@ -54,10 +58,11 @@ export default defineComponent({
     const page = ref(0);
     const size = ref(20);
     const getUrlEntries = async (): Promise<void> => {
+      console.log("[UrlEntriesTable] getUrlEntries");
       try {
         isLoading.value = true;
         errorMessage.value = undefined;
-        items.value = await api.listUrlEntries(page.value, size.value);
+        items.value = await api.listUrlEntries(page.value, size.value, props.search);
       } catch (err) {
         errorMessage.value = err.message;
       } finally {
@@ -65,6 +70,12 @@ export default defineComponent({
       }
     };
     onMounted(getUrlEntries);
+
+    const debouncedGetUrlEntries = debounce(getUrlEntries, 250, { trailing: true });
+    watch(() => props.search, () => {
+  console.log("[UrlEntriesTable] props.search changed", {search: props.search})
+      debouncedGetUrlEntries();
+    })
 
     return {
       items,

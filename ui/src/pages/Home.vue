@@ -30,9 +30,9 @@
       >
         Url Shortener
       </h2>
-      <AddUrl class="max-w-screen-md mx-auto" @created="reload" />
+      <AddUrl class="max-w-screen-md mx-auto" @created="reload" @update:search="onChangeSearch" />
     </div>
-    <UrlEntriesTable ref="table" class="mb-16" />
+    <UrlEntriesTable ref="table" class="mb-16" :search="search" />
   </div>
   <div class="absolute top-0 h-80 w-full bg-red-500 z-0 overflow-hidden">
     <img src="/header.png" class="mx-auto custom-transform" />
@@ -52,9 +52,17 @@ export default defineComponent({
     const table = ref<typeof UrlEntriesTable | null>(null);
     const reload = () => table.value?.getUrlEntries?.();
 
+    const search = ref('');
+    const onChangeSearch = (value: string) => {
+  console.log("[Home] onChangeSearch", { value })
+      search.value = value
+    }
+
     return {
       table,
       reload,
+      search,
+      onChangeSearch,
     };
   },
 });

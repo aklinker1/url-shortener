@@ -33,7 +33,8 @@ func readInputUrlEntry(res http.ResponseWriter, req *http.Request) (*models.Inpu
 func ListURLEntries() http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		pagination := req.Context().Value(utils.PAGINATION).(*models.Pagination)
-		entries, err := repos.URLEntryRepo.List(pagination)
+		search := req.URL.Query().Get("search")
+		entries, err := repos.URLEntryRepo.List(pagination, search)
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusInternalServerError)
 			return
