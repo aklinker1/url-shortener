@@ -14,11 +14,10 @@ type URLEntry struct {
 
 func (model *URLEntry) ToDTO() *URLEntryDTO {
 	return &URLEntryDTO{
-		ID:        model.ID,
+		ID:        strconv.FormatInt(int64(model.ID), 32),
 		CreatedAt: model.CreatedAt,
 		URL:       model.URL,
 		Visits:    model.Visits,
-		HashedID:  strconv.FormatInt(int64(model.ID), 32),
 	}
 }
 

@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"io/fs"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"strconv"
 	"strings"
@@ -73,10 +73,15 @@ func fileServer(r chi.Router, public string, assets *fs.FS) {
 
 func urlEntryCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		urlEntryID := chi.URLParam(req, utils.URL_ENTRY_ID_PARAM)
-		urlEntry, err := repos.URLEntryRepo.Read(urlEntryID)
+		hashedID := chi.URLParam(req, utils.URL_ENTRY_ID_PARAM)
+		id, err := strconv.ParseInt(hashedID, 32, 0)
 		if err != nil {
-			http.Error(res, "URL Entry not found with id="+urlEntryID, 404)
+			http.Error(res, "Failed to read hashed ID="+hashedID, 404)
+			return
+		}
+		urlEntry, err := repos.URLEntryRepo.Read(id)
+		if err != nil {
+			http.Error(res, "URL Entry not found with id="+string(id), 404)
 			return
 		}
 		ctx := context.WithValue(req.Context(), utils.URL_ENTRY, urlEntry)
@@ -86,7 +91,12 @@ func urlEntryCtx(next http.Handler) http.Handler {
 
 func shortURLCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		id := chi.URLParam(req, utils.SHORT_URL_PATH_PARAM)
+		hashedID := chi.URLParam(req, utils.SHORT_URL_PATH_PARAM)
+		id, err := strconv.ParseInt(hashedID, 32, 0)
+		if err != nil {
+			http.Error(res, "Failed to read hashed ID="+hashedID, 404)
+			return
+		}
 		idCtx := context.WithValue(req.Context(), utils.SHORT_URL_PATH_PARAM, id)
 		urlEntry, _ := repos.URLEntryRepo.Read(id)
 
