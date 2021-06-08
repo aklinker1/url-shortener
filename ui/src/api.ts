@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const host = `${window.location.protocol}//${window.location.host}`
+const host = `${window.location.protocol}//${window.location.host.replace("www.", "")}`
 const baseUrl = "/@/api";
 
 export interface UrlEntryDto {
