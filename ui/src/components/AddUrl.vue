@@ -54,7 +54,7 @@ const isError = computed(() => !!errorMessage.value);
 
 const isLoading = ref(false);
 async function createNewUrlEntry() {
-  if (isShowingNew.value) return;
+  if (!isShowingNew.value) return;
 
   const value = url.value.trim();
   if (value == "") return;
