@@ -34,7 +34,6 @@ func createRouter(ui *fs.FS, metaJSON string) *chi.Mux {
 
 	r.Route("/@/api/urlEntries", func(r chi.Router) {
 		r.With(paginate).Get("/", controllers.ListURLEntries())
-		// r.With(paginate).Get("/search", controllers.SearchURLEnties())
 		r.Post("/", controllers.CreateURLEntry())
 
 		r.Route(fmt.Sprintf("/{%s}", utils.URL_ENTRY_ID_PARAM), func(r chi.Router) {

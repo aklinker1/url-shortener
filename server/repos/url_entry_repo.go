@@ -63,12 +63,20 @@ func (repo *urlEntryRepo) UpdateVisits(entry *models.URLEntry) (*models.URLEntry
 // 	panic("NOT IMPLEMENTED")
 // }
 
-func (repo *urlEntryRepo) List(pagination *models.Pagination) ([]*models.URLEntry, error) {
+func (repo *urlEntryRepo) List(pagination *models.Pagination, search string) ([]*models.URLEntry, error) {
 	models := []*models.URLEntry{}
-	err := repo.db.
+	query := repo.db.
 		Limit(pagination.Limit()).
 		Offset(pagination.Offset()).
-		Order("created_at DESC").
-		Find(&models).Error
-	return models, err
+		Order("created_at DESC")
+	var err error
+	if search != "" {
+		err = query.Find(&models, "url LIKE ?", "%"+search+"%").Error
+	} else {
+		err = query.Find(&models).Error
+	}
+	if err != nil {
+		return nil, err
+	}
+	return models, nil
 }

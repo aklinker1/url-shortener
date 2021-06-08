@@ -9,9 +9,11 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@types/lodash.debounce": "^4.0.6",
     "axios": "^0.21.1",
     "firebase": "^8.6.5",
     "firebaseui": "^4.8.0",
+    "lodash.debounce": "^4.0.8",
     "vue": "3.0.5",
     "vue-router": "^4.0.8"
   },
