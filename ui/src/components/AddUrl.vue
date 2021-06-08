@@ -21,7 +21,7 @@
         }"
         placeholder="Enter a url..."
         v-model="url"
-        :disabled="isLoading"
+        :disabled="isLoading || !isLoggedIn"
       />
     </div>
     <div class="flex flex-row mt-3 text-white">
