@@ -55,11 +55,15 @@ func createRouter(ui *fs.FS, metaJSON string) *chi.Mux {
 }
 
 func fileServer(r chi.Router, public string, assets *fs.FS) {
+	index, err := fs.ReadFile(*assets, "index.html")
+	if err != nil {
+		panic(err)
+	}
+	embeddedFs := http.StripPrefix(public, http.FileServer(http.FS(*assets)))
+
 	if strings.ContainsAny(public, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}
-
-	fs := http.StripPrefix(public, http.FileServer(http.FS(*assets)))
 
 	if public != "/" && public[len(public)-1] != '/' {
 		r.Get(public, http.RedirectHandler(public+"/", 301).ServeHTTP)
@@ -67,7 +71,13 @@ func fileServer(r chi.Router, public string, assets *fs.FS) {
 	}
 
 	r.Get(public+"*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fs.ServeHTTP(w, r)
+		if !strings.ContainsRune(r.URL.Path, '.') {
+			w.WriteHeader(200)
+			w.Header().Add("Content-Type", "text/html")
+			w.Write(index)
+		} else {
+			embeddedFs.ServeHTTP(w, r)
+		}
 	}))
 }
 
@@ -81,7 +91,7 @@ func urlEntryCtx(next http.Handler) http.Handler {
 		}
 		urlEntry, err := repos.URLEntryRepo.Read(id)
 		if err != nil {
-			http.Error(res, "URL Entry not found with id="+string(id), 404)
+			http.Error(res, "URL Entry not found with id="+fmt.Sprint(id), 404)
 			return
 		}
 		ctx := context.WithValue(req.Context(), utils.URL_ENTRY, urlEntry)
