@@ -34,7 +34,9 @@
     </div>
     <UrlEntriesTable ref="table" class="mb-16" />
   </div>
-  <div class="absolute top-0 h-80 w-full bg-red-500 z-0" />
+  <div class="absolute top-0 h-80 w-full bg-red-500 z-0 overflow-hidden">
+    <img src="/header.png" class="mx-auto custom-transform" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -57,3 +59,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.custom-transform {
+  transform: translate(-40%, -72px);
+}
+</style>
